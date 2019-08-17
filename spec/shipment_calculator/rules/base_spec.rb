@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe ShipmentCalculator::Rules::Base do
+  subject(:base_rule) { described_class.new }
+
   class TestRule < ShipmentCalculator::Rules::Base
   end
 
@@ -23,6 +25,17 @@ RSpec.describe ShipmentCalculator::Rules::Base do
 
     it 'does not raise error' do
       expect { test_rule.apply(double) }.not_to raise_error
+    end
+  end
+
+  describe '#providers' do
+    before do
+      allow(Psych).to receive(:load_file).with('config/providers.yml')
+        .and_return({ 'MR' => { 'S' => 1 } })
+    end
+
+    it 'has providers' do
+      expect(base_rule.providers).to include(ShipmentCalculator::Provider)
     end
   end
 end
