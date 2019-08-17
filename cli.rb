@@ -1,3 +1,3 @@
 require 'shipment_calculator'
 
-ShipmentCalculator.calculate(ARGV[0])
+ARGV[0].nil? ? ShipmentCalculator.calculate : ShipmentCalculator.calculate(ARGV[0])
