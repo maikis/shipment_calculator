@@ -6,6 +6,10 @@ require 'calculator'
 require 'provider'
 require 'transaction'
 
+Dir[File.join(__dir__, 'shipment_calculator', 'rules', '*.rb')].each do |file|
+  require file
+end
+
 module ShipmentCalculator
   class Error < StandardError; end
 
