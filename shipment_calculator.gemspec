@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   end
   spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
-  spec.require_paths = ['lib', 'config', 'lib/shipment_calculator']
+  spec.require_paths = ['lib', 'config', 'data', 'lib/shipment_calculator']
 
   spec.add_development_dependency 'bundler', '~> 2.0'
   spec.add_development_dependency 'rake', '~> 10.0'
