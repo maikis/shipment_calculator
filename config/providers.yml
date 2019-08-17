@@ -1,0 +1,17 @@
+# Provider config.
+# Format:
+#
+# provider_name:
+#   size: price in eur
+#
+# I decided to use yaml to configure providers to make it easy to customize
+# providers.
+
+LP:
+  S: 1.50
+  M: 4.90
+  L: 6.90
+MR:
+  S: 2
+  M: 3
+  L: 4
