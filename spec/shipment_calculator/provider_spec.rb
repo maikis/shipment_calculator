@@ -18,8 +18,28 @@ RSpec.describe ShipmentCalculator::Provider do
   end
 
   describe '#price_by_size' do
+    let(:size) { 'S' }
+
     it 'returns price for provided size' do
-      expect(provider.price_by_size('S')).to eq(2)
+      expect(provider.price_by_size(size)).to eq(2)
+    end
+  end
+
+  describe '#includes_size?' do
+    context 'when size is included' do
+      let(:valid_size) { 'S' }
+
+      it 'returns true' do
+        expect(provider.includes_size?(valid_size)).to eq(true)
+      end
+    end
+
+    context 'when size is not included' do
+      let(:invalid_size) { 'XL' }
+
+      it 'returns true' do
+        expect(provider.includes_size?(invalid_size)).to eq(false)
+      end
     end
   end
 end

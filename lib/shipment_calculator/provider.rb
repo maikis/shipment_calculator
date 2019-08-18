@@ -16,5 +16,9 @@ module ShipmentCalculator
     def price_by_size(size)
       sizes_with_prices.fetch(size)
     end
+
+    def includes_size?(size)
+      sizes_with_prices.keys.include?(size)
+    end
   end
 end
