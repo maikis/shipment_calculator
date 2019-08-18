@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 RSpec.describe ShipmentCalculator::Transaction do
-  subject(:transaction) { described_class.new(date, size, provider) }
+  subject(:transaction) { described_class.new(date, size, short_name) }
 
-  let(:date) { double('date') }
-  let(:size) { double('size') }
-  let(:provider) { double('provider') }
+  let(:date) { Date.parse('2015-02-01') }
+  let(:size) { 'S' }
+  let(:short_name) { 'MR' }
 
   describe '#date' do
     it 'has date' do
@@ -19,9 +19,52 @@ RSpec.describe ShipmentCalculator::Transaction do
     end
   end
 
-  describe '#provider' do
-    it 'has provider' do
-      expect(transaction.provider).to eq(provider)
+  describe '#short_name' do
+    it 'has short_name' do
+      expect(transaction.short_name).to eq(short_name)
+    end
+  end
+
+  describe '#valid?' do
+    let(:sizes_with_prices) { { 'S' => 1 } }
+    let(:providers) { [provider] }
+    let(:provider_short_name) { 'MR' }
+    let(:provider) do
+      ShipmentCalculator::Provider.new(provider_short_name, sizes_with_prices)
+    end
+
+    before do
+      allow(ShipmentCalculator).to receive(:providers).and_return(providers)
+    end
+
+    context 'when date is invalid' do
+      let(:date) { nil }
+
+      it 'returns false' do
+        expect(transaction.valid?).to eq(false)
+      end
+    end
+
+    context 'when size is unrecognized' do
+      let(:size) { 'XL' }
+
+      it 'returns false' do
+        expect(transaction.valid?).to eq(false)
+      end
+    end
+
+    context 'when provider is unrecognized' do
+      let(:short_name) { 'UNRECOGNIZED' }
+
+      it 'returns false' do
+        expect(transaction.valid?).to eq(false)
+      end
+    end
+
+    context 'when all attributes are valid' do
+      it 'returns true' do
+        expect(transaction.valid?).to eq(true)
+      end
     end
   end
 end
