@@ -1,7 +1,7 @@
 module ShipmentCalculator
   module Rules
     class Base
-      def apply(_transaction_data)
+      def apply
         raise NotImplementedError
       end
 

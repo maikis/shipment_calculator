@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 RSpec.describe ShipmentCalculator::Calculator do
-  subject(:calculator) { described_class.new(shipment_data, rules) }
+  subject(:calculator) { described_class.new(transaction_data, rules) }
 
   let(:rules) { [double('rule')] }
-  let(:shipment_data) { double('data') }
+  let(:transaction_data) { double('data') }
 
-  describe '#shipment_data' do
+  describe '#transaction_data' do
     it 'has shipment data' do
-      expect(calculator.shipment_data).to eq(shipment_data)
+      expect(calculator.transaction_data).to eq(transaction_data)
     end
   end
 

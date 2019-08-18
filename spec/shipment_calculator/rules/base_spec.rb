@@ -8,7 +8,7 @@ RSpec.describe ShipmentCalculator::Rules::Base do
 
   context 'when subclass has no #apply method' do
     it 'raises error' do
-      expect { TestRule.new.apply(double) }.to raise_error(NotImplementedError)
+      expect { TestRule.new.apply }.to raise_error(NotImplementedError)
     end
   end
 
@@ -17,14 +17,14 @@ RSpec.describe ShipmentCalculator::Rules::Base do
 
     before do
       class << test_rule
-        def apply(transaction_data)
+        def apply
           'it works'
         end
       end
     end
 
     it 'does not raise error' do
-      expect { test_rule.apply(double) }.not_to raise_error
+      expect { test_rule.apply }.not_to raise_error
     end
   end
 

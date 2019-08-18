@@ -1,9 +1,9 @@
 module ShipmentCalculator
   class Calculator
-    attr_reader :shipment_data, :rules
+    attr_reader :transaction_data, :rules
 
-    def initialize(shipment_data, rules)
-      @shipment_data = shipment_data
+    def initialize(transaction_data, rules)
+      @transaction_data = transaction_data
       @rules = rules
     end
   end
