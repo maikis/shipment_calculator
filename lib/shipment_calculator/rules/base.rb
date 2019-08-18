@@ -1,7 +1,11 @@
 module ShipmentCalculator
   module Rules
     class Base
-      def apply
+      def shipment_price
+        raise NotImplementedError
+      end
+
+      def discount
         raise NotImplementedError
       end
 
