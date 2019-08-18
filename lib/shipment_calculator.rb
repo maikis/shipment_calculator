@@ -5,7 +5,6 @@ require 'version'
 require 'calculator'
 require 'provider'
 require 'transaction'
-require 'result'
 
 Dir[File.join(__dir__, 'shipment_calculator', 'rules', '*.rb')].each do |file|
   require file

@@ -6,47 +6,25 @@ RSpec.describe ShipmentCalculator::Rules::Base do
   class TestRule < ShipmentCalculator::Rules::Base
   end
 
-  context 'when subclass has no #shipment_price method' do
+  context 'when subclass has no #apply method' do
     it 'raises error' do
-      expect { TestRule.new.shipment_price }.to raise_error(NotImplementedError)
+      expect { TestRule.new.apply }.to raise_error(NotImplementedError)
     end
   end
 
-  context 'when subclass has no #discount method' do
-    it 'raises error' do
-      expect { TestRule.new.discount }.to raise_error(NotImplementedError)
-    end
-  end
-
-  context 'when subclass has #shipment_price method' do
+  context 'when subclass has #apply method' do
     let(:test_rule) { TestRule.new }
 
     before do
       class << test_rule
-        def shipment_price
+        def apply
           'it works'
         end
       end
     end
 
     it 'does not raise error' do
-      expect { test_rule.shipment_price }.not_to raise_error
-    end
-  end
-
-  context 'when subclass has #discount method' do
-    let(:test_rule) { TestRule.new }
-
-    before do
-      class << test_rule
-        def discount
-          'it works'
-        end
-      end
-    end
-
-    it 'does not raise error' do
-      expect { test_rule.discount }.not_to raise_error
+      expect { test_rule.apply }.not_to raise_error
     end
   end
 

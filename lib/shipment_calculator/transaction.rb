@@ -1,6 +1,7 @@
 module ShipmentCalculator
   class Transaction
     attr_reader :date, :size, :short_name
+    attr_accessor :shipment_price, :discount
 
     def initialize(date, size, short_name)
       @date = date
