@@ -16,6 +16,7 @@ RSpec.describe ShipmentCalculator::Rules::ThirdLargeFreeRule do
 
     let(:provider_config) { { 'LP' => { large_size => 6.9 }, 'MR' => { large_size => 4 } } }
     let(:large_size) { 'L' }
+    let(:provider) { 'LP' }
 
     let(:all_providers) do
       [ShipmentCalculator::Provider.new(
@@ -38,7 +39,7 @@ RSpec.describe ShipmentCalculator::Rules::ThirdLargeFreeRule do
           let(:transactions) do
             (1..6).map do |day|
               ShipmentCalculator::Transaction.new(
-                Date.parse("2019-02-0#{day}"), large_size, 'LP'
+                Date.parse("2019-02-0#{day}"), large_size, provider
               )
             end
           end
@@ -68,7 +69,7 @@ RSpec.describe ShipmentCalculator::Rules::ThirdLargeFreeRule do
             (1..6).map do |day|
               month = (day <= 3 ? 2 : 3)
               ShipmentCalculator::Transaction.new(
-                Date.parse("2019-0#{month}-0#{day}"), large_size, 'LP'
+                Date.parse("2019-0#{month}-0#{day}"), large_size, provider
               )
             end
           end
@@ -93,7 +94,7 @@ RSpec.describe ShipmentCalculator::Rules::ThirdLargeFreeRule do
             (1..6).map do |day|
               year = (day <= 3 ? 2018 : 2019)
               ShipmentCalculator::Transaction.new(
-                Date.parse("#{year}-02-0#{day}"), large_size, 'LP'
+                Date.parse("#{year}-02-0#{day}"), large_size, provider
               )
             end
           end
@@ -129,7 +130,6 @@ RSpec.describe ShipmentCalculator::Rules::ThirdLargeFreeRule do
     # decided to check if it really works well with multiple transactions too.
     context 'when shipments are not Large (L)' do
       let(:small_size) { 'S' }
-      let(:provider) { 'LP' }
       let(:transactions) do
         (1..2).map do |day|
           ShipmentCalculator::Transaction.new(
