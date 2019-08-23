@@ -7,7 +7,9 @@ module ShipmentCalculator
       SIZE = 'L'.freeze
 
       def initialize(transactions)
-        @transactions = transactions
+        @transactions = transactions.select do |tr|
+          tr.size == SIZE && tr.short_name == PROVIDER
+        end
       end
 
       def apply
@@ -25,14 +27,10 @@ module ShipmentCalculator
       private
 
       def discount(transaction, pos)
-        return 0 unless eligible?(transaction)
-
         third?(pos) ? providers_price(transaction) : 0
       end
 
       def price(transaction, pos)
-        return providers_price(transaction) unless eligible?(transaction)
-
         third?(pos) ? 0 : providers_price(transaction)
       end
 
@@ -60,10 +58,6 @@ module ShipmentCalculator
         transactions.select do |transaction|
           transaction.date.year == year && transaction.date.month == month
         end
-      end
-
-      def eligible?(transaction)
-        transaction.short_name == PROVIDER
       end
     end
   end

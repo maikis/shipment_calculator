@@ -4,10 +4,15 @@ RSpec.describe ShipmentCalculator::Rules::ThirdLargeFreeRule do
   subject(:rule) { described_class.new(transactions) }
 
   let(:transactions) { double('transactions') }
+  let(:large_transactions) { double('large_transactions') }
 
   describe '#transactions' do
+    before do
+      allow(transactions).to receive(:select).and_return(large_transactions)
+    end
+
     it 'has transactions' do
-      expect(rule.transactions).to eq(transactions)
+      expect(rule.transactions).to eq(large_transactions)
     end
   end
 
@@ -15,6 +20,7 @@ RSpec.describe ShipmentCalculator::Rules::ThirdLargeFreeRule do
     subject(:result) { rule.apply }
 
     let(:provider_config) { { 'LP' => { large_size => 6.9 }, 'MR' => { large_size => 4 } } }
+    let(:small_size) { 'S' }
     let(:large_size) { 'L' }
     let(:provider) { 'LP' }
 
@@ -110,27 +116,31 @@ RSpec.describe ShipmentCalculator::Rules::ThirdLargeFreeRule do
 
       context 'when provider is not LP' do
         let(:transactions) do
-          (1..3).map do |day|
-            ShipmentCalculator::Transaction.new(
-              Date.parse("2015-02-0#{day}"), large_size, 'MR'
-            )
-          end
+          [ShipmentCalculator::Transaction.new(
+            Date.parse("2015-02-01"), large_size, 'MR'
+          )]
         end
 
-        it 'sets regular price for all transactions', :aggregate_failures do
-          (0..2).each do |index|
-            expect(result[index].shipment_price).to eq(4)
-            expect(result[index].discount).to eq(0)
-          end
+        it 'ignores transactions' do
+          expect(rule.transactions).to be_empty
         end
       end
     end
 
-    # Probably single transaction would be sufficient in this context, but I
-    # decided to check if it really works well with multiple transactions too.
     context 'when shipments are not Large (L)' do
-      let(:small_size) { 'S' }
       let(:transactions) do
+        [ShipmentCalculator::Transaction.new(
+          Date.parse("2015-02-01"), small_size, provider
+        )]
+      end
+
+      it 'ignores transactions' do
+        expect(rule.transactions).to be_empty
+      end
+    end
+
+    context 'when shipments are mixed sizes' do
+      let(:small_transactions) do
         (1..2).map do |day|
           ShipmentCalculator::Transaction.new(
             Date.parse("2015-02-0#{day}"), small_size, provider
@@ -138,11 +148,28 @@ RSpec.describe ShipmentCalculator::Rules::ThirdLargeFreeRule do
         end
       end
 
-      it 'ignores transaction' do
-        (0..1).each do |index|
-          expect(result[index].shipment_price).to be_nil
-          expect(result[index].discount).to be_nil
+      let(:large_transactions) do
+        (3..5).map do |day|
+          ShipmentCalculator::Transaction.new(
+            Date.parse("2015-02-0#{day}"), large_size, provider
+          )
         end
+      end
+
+      let(:transactions) { small_transactions + large_transactions }
+
+      before do
+        result
+      end
+
+      it 'does not add discount for absolute third transaction', :aggregate_failures do
+        expect(rule.transactions.first.shipment_price).to eq(6.9)
+        expect(rule.transactions.first.discount).to eq(0)
+      end
+
+      it 'adds discount for third large LP transaction', :aggregate_failures do
+        expect(rule.transactions[2].shipment_price).to eq(0)
+        expect(rule.transactions[2].discount).to eq(6.9)
       end
     end
   end
