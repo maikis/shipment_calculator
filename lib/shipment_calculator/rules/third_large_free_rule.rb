@@ -47,18 +47,6 @@ module ShipmentCalculator
           provider.short_name == transaction.short_name
         end
       end
-
-      def months
-        transactions.map do |transaction|
-          [transaction.date.year, transaction.date.month]
-        end.uniq
-      end
-
-      def transactions_at(year, month)
-        transactions.select do |transaction|
-          transaction.date.year == year && transaction.date.month == month
-        end
-      end
     end
   end
 end
