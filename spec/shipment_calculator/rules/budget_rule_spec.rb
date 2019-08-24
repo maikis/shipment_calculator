@@ -45,7 +45,7 @@ RSpec.describe ShipmentCalculator::Rules::BudgetRule do
       end
 
       it 'subtracts from monthly budget' do
-        expect(rule.monthly_budget).to eq(9) # 10 - 1 (transaction discount).
+        expect(rule.current_month_budget).to eq(9) # 10 - 1 (transaction discount).
       end
     end
 
@@ -58,7 +58,7 @@ RSpec.describe ShipmentCalculator::Rules::BudgetRule do
       end
 
       it 'does not subtract from monthly budget' do
-        expect(rule.monthly_budget).to eq(0)
+        expect(rule.current_month_budget).to eq(0)
       end
     end
 
@@ -66,12 +66,12 @@ RSpec.describe ShipmentCalculator::Rules::BudgetRule do
       subject(:rule) { described_class.new(transactions, 0.3) }
 
       it 'leaves discount partially applied', :aggregate_failures do
-        expect(result.first.shipment_price).to eq(1.3)
-        expect(result.first.discount).to eq(0.7)
+        expect(result.first.shipment_price).to eq(1.7)
+        expect(result.first.discount).to eq(0.3)
       end
 
       it 'subtracts from monthly budget' do
-        expect(rule.monthly_budget).to eq(0)
+        expect(rule.current_month_budget).to eq(0)
       end
     end
 
@@ -101,8 +101,8 @@ RSpec.describe ShipmentCalculator::Rules::BudgetRule do
       end
 
       it 'applies budget for each month', :aggregate_failures do
-        expect(result.first.discount).to eq(1)
-        expect(result.first.discount).to eq(1)
+        expect(result[0].discount).to eq(1)
+        expect(result[1].discount).to eq(1)
       end
     end
 
