@@ -19,28 +19,29 @@ module ShipmentCalculator
   SIZE = 1
   SHORT_NAME = 2
 
+  # For current solution this kind of list is sufficient, but if different
+  # types of calculations would be needed, then it would make sense to
+  # put strategies to separate classes and use strategy pattern, or something
+  # like that.
   MAIN_STRATEGY = [
     Rules::SmallShipmentLowestPriceRule,
     Rules::ThirdLargeFreeRule,
     Rules::BudgetRule
   ].freeze
 
-  # Main calculation "initializer". Accepts file name of input data file as a
-  # parameter. The idea was that for now simple calculate method will be enough,
-  # though if module will have a need to grow in the future, then it would be
-  # easy to simply add other method, like custom_calculate etc. Or we could
-  # go even more magic way and accept calculation strategy as a parameter and
-  # form custom calculator instance to do the job.
+  # Main calculation "initializer" method. Accepts file name of input data file
+  # as a parameter. The idea was that for now simple calculate method will be
+  # enough, though if module will have a need to grow in the future, then it
+  # would be easy to simply add other method, like custom_calculate etc. Or we
+  # could go even more magic way and accept calculation strategy as a parameter
+  # and form custom calculator instance to do the job.
   def self.calculate(file_name)
-    transactions = transaction_data(file_name)
-    valid_transactions = transactions.select(&:valid?)
-    MAIN_STRATEGY.each do |rule|
-      rule.new(valid_transactions).apply
-    end
+    transactions = transactions_from(file_name)
+    Calculator.new(transactions, MAIN_STRATEGY).basic_calculate
     Result.new(transactions, StdoutFormatter.new).output_result
   end
 
-  def self.transaction_data(file_name)
+  def self.transactions_from(file_name)
     file_name = file_name.nil? ? 'input.txt' : file_name
     File.new("data/#{file_name}", 'r').map do |line|
       data = line.chomp.split(' ')

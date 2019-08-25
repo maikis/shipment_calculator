@@ -23,9 +23,7 @@ module ShipmentCalculator
       rescue ArgumentError
         nil
       end
-      transaction = ShipmentCalculator::Transaction.new(date, size, short_name)
-
-      transaction
+      ShipmentCalculator::Transaction.new(date, size, short_name)
     end
 
     private
