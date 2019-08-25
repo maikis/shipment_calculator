@@ -1,6 +1,11 @@
-require "bundler/gem_tasks"
-require "rspec/core/rake_task"
+task default: :run
 
-RSpec::Core::RakeTask.new(:spec)
+desc 'Run application'
+task :run do |_task, args|
+  sh "bundle exec ruby cli.rb #{args.first}"
+end
 
-task :default => :spec
+desc 'Run specs'
+task :test do
+  sh 'bundle exec rspec'
+end
