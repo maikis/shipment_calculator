@@ -26,13 +26,13 @@ module ShipmentCalculator
       ShipmentCalculator::Transaction.new(date, size, short_name)
     end
 
-    private
-
     def provider
       providers.detect do |provider|
         provider.short_name == short_name && provider.includes_size?(size)
       end
     end
+
+    private
 
     def providers
       @providers ||= ShipmentCalculator.providers
