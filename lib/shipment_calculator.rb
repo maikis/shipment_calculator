@@ -17,32 +17,38 @@ module ShipmentCalculator
 
   DATE = 0
   SIZE = 1
-  PRICE = 2
+  SHORT_NAME = 2
+
+  MAIN_STRATEGY = [
+    Rules::SmallShipmentLowestPriceRule,
+    Rules::ThirdLargeFreeRule,
+    Rules::BudgetRule
+  ].freeze
 
   # Main calculation "initializer". Accepts file name of input data file as a
-  # parameter.
+  # parameter. The idea was that for now simple calculate method will be enough,
+  # though if module will have a need to grow in the future, then it would be
+  # easy to simply add other method, like custom_calculate etc. Or we could
+  # go even more magic way and accept calculation strategy as a parameter and
+  # form custom calculator instance to do the job.
   def self.calculate(file_name)
-    tr_data = transaction_data(file_name)
-    tr_data_valid = tr_data.select(&:valid?)
-    [Rules::SmallShipmentLowestPriceRule, Rules::ThirdLargeFreeRule, Rules::BudgetRule].each do |rule|
-      rule.new(tr_data_valid).apply
+    transactions = transaction_data(file_name)
+    valid_transactions = transactions.select(&:valid?)
+    MAIN_STRATEGY.each do |rule|
+      rule.new(valid_transactions).apply
     end
-    Result.new(tr_data, StdoutFormatter.new).output_result
+    Result.new(transactions, StdoutFormatter.new).output_result
   end
 
   def self.transaction_data(file_name)
-    # file_name defaults to 'input.txt' as stated in homework assignment.
     file_name = file_name.nil? ? 'input.txt' : file_name
     File.new("data/#{file_name}", 'r').map do |line|
       data = line.chomp.split(' ')
-      data[DATE] = Date.parse(data[DATE]) rescue data[DATE]
-      transaction = ShipmentCalculator::Transaction.new(data[DATE], data[SIZE], data[PRICE])
-      provider = providers.detect { |provider| provider.short_name == transaction.short_name }
-      if transaction.valid?
-        transaction.shipment_price = provider.price_by_size(transaction.size)
-        transaction.discount = 0
-      end
-      transaction
+      Transaction.from_data(
+        date: data[DATE],
+        size: data[SIZE],
+        short_name: data[SHORT_NAME]
+      )
     end
   end
 
