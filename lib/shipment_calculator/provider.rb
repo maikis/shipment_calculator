@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ShipmentCalculator
   class Provider
     attr_reader :short_name, :sizes_with_prices

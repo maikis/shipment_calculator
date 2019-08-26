@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ShipmentCalculator
   class Calculator
     attr_reader :valid_transactions, :rules

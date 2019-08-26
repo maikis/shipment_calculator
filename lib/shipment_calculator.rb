@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'yaml'
 require 'date'
 
@@ -54,7 +56,10 @@ module ShipmentCalculator
   end
 
   # Defining providers in yaml gives more flexibility to add or remove
-  # providers and their data.
+  # providers and their data. IMO This alongside with .transactions_from method
+  # should go into some configuration class or module, depending on the need,
+  # if application grows. For now I decided to leave it here as it is not
+  # completely clear where and how this application is planned to be used.
   def self.providers
     @providers ||= begin
       provider_config = Psych.load_file('config/providers.yml')

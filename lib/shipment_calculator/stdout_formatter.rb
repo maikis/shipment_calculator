@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ShipmentCalculator
   # Formatter class which prints to STDOUT. If module would have a need to
   # evolve, this file could be moved to separate formatter folder and other

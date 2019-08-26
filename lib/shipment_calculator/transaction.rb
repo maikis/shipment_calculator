@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ShipmentCalculator
   class Transaction
     attr_reader :date, :size, :short_name
