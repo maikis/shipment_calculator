@@ -5,10 +5,6 @@ module ShipmentCalculator
         raise NotImplementedError
       end
 
-      def providers
-        @providers ||= ShipmentCalculator.providers
-      end
-
       protected
 
       def months

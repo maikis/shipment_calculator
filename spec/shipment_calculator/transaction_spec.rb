@@ -6,6 +6,16 @@ RSpec.describe ShipmentCalculator::Transaction do
   let(:date) { Date.parse('2015-02-01') }
   let(:size) { 'S' }
   let(:short_name) { 'MR' }
+  let(:sizes_with_prices) { { 'S' => 1 } }
+  let(:provider_short_name) { 'MR' }
+  let(:providers) { [provider] }
+  let(:provider) do
+    ShipmentCalculator::Provider.new(provider_short_name, sizes_with_prices)
+  end
+
+  before do
+    allow(ShipmentCalculator).to receive(:providers).and_return(providers)
+  end
 
   describe '#date' do
     it 'has date' do
@@ -25,18 +35,13 @@ RSpec.describe ShipmentCalculator::Transaction do
     end
   end
 
+  describe '#regular_price' do
+    it 'has regular_price' do
+      expect(transaction.regular_price).to eq(provider.price_by_size(size))
+    end
+  end
+
   describe '#valid?' do
-    let(:sizes_with_prices) { { 'S' => 1 } }
-    let(:providers) { [provider] }
-    let(:provider_short_name) { 'MR' }
-    let(:provider) do
-      ShipmentCalculator::Provider.new(provider_short_name, sizes_with_prices)
-    end
-
-    before do
-      allow(ShipmentCalculator).to receive(:providers).and_return(providers)
-    end
-
     context 'when date is invalid' do
       let(:date) { nil }
 

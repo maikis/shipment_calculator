@@ -1,18 +1,23 @@
 require 'spec_helper'
 
 RSpec.describe ShipmentCalculator::Rules::SmallShipmentLowestPriceRule do
-  subject(:small_shipment_rule) { described_class.new(transactions) }
+  subject(:rule) { described_class.new(transactions) }
 
   let(:transactions) { double('transactions') }
+  let(:small_transactions) { double('small_transactions') }
 
   describe '#transactions' do
+    before do
+      allow(transactions).to receive(:select).and_return(small_transactions)
+    end
+
     it 'has transactions' do
-      expect(small_shipment_rule.transactions).to eq(transactions)
+      expect(rule.transactions).to eq(small_transactions)
     end
   end
 
   describe '#apply' do
-    subject(:small_shipment_rule) { described_class.new(transactions) }
+    subject(:rule) { described_class.new(transactions) }
 
     let(:provider_config) { { 'MR' => { 'S' => 2 }, 'LP' => { 'S' => 1.5 } } }
     let(:date) { Date.parse('2015-02-01') }
@@ -43,7 +48,7 @@ RSpec.describe ShipmentCalculator::Rules::SmallShipmentLowestPriceRule do
 
     before do
       allow(ShipmentCalculator).to receive(:providers).and_return(all_providers)
-      small_shipment_rule.apply
+      rule.apply
     end
 
     context 'when transacion is small size' do

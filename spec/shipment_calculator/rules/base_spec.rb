@@ -28,26 +28,26 @@ RSpec.describe ShipmentCalculator::Rules::Base do
     end
   end
 
-  describe '#providers' do
-    let(:provider_config) { { 'MR' => { 'S' => 2 }, 'LP' => { 'S' => 1.5 } } }
+  # describe '#providers' do
+  #   let(:provider_config) { { 'MR' => { 'S' => 2 }, 'LP' => { 'S' => 1.5 } } }
 
-    let(:all_providers) do
-      [ShipmentCalculator::Provider.new(
-         provider_config.keys[0],
-         provider_config.values[0]
-       ),
-       ShipmentCalculator::Provider.new(
-        provider_config.keys[1],
-        provider_config.values[1]
-       )]
-    end
+  #   let(:all_providers) do
+  #     [ShipmentCalculator::Provider.new(
+  #        provider_config.keys[0],
+  #        provider_config.values[0]
+  #      ),
+  #      ShipmentCalculator::Provider.new(
+  #       provider_config.keys[1],
+  #       provider_config.values[1]
+  #      )]
+  #   end
 
-    before do
-      allow(ShipmentCalculator).to receive(:providers).and_return(all_providers)
-    end
+  #   before do
+  #     allow(ShipmentCalculator).to receive(:providers).and_return(all_providers)
+  #   end
 
-    it 'has providers' do
-      expect(base_rule.providers).to include(ShipmentCalculator::Provider)
-    end
-  end
+  #   it 'has providers' do
+  #     expect(base_rule.providers).to include(ShipmentCalculator::Provider)
+  #   end
+  # end
 end

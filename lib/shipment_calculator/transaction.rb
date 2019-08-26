@@ -9,12 +9,22 @@ module ShipmentCalculator
       @short_name = short_name
       return unless valid?
 
-      @shipment_price = provider.price_by_size(size)
+      @shipment_price = regular_price
       @discount = 0
     end
 
     def valid?
       date.class == Date && provider_present?
+    end
+
+    def provider
+      @provider ||= Provider.all.detect do |provider|
+        provider.short_name == short_name && provider.includes_size?(size)
+      end
+    end
+
+    def regular_price
+      @regular_price ||= provider.price_by_size(size)
     end
 
     def self.from_data(date:, size:, short_name:)
@@ -23,20 +33,10 @@ module ShipmentCalculator
       rescue ArgumentError
         nil
       end
-      ShipmentCalculator::Transaction.new(date, size, short_name)
-    end
-
-    def provider
-      providers.detect do |provider|
-        provider.short_name == short_name && provider.includes_size?(size)
-      end
+      new(date, size, short_name)
     end
 
     private
-
-    def providers
-      @providers ||= ShipmentCalculator.providers
-    end
 
     def provider_present?
       !provider.nil?

@@ -6,13 +6,13 @@ module ShipmentCalculator
       SMALL = 'S'.freeze
 
       def initialize(transactions)
-        @transactions = transactions
+        @transactions = transactions.select do |transaction|
+          transaction.size == SMALL
+        end
       end
 
       def apply
         transactions.map do |transaction|
-          next unless transaction.size == SMALL
-
           transaction.shipment_price = lowest_price_for(transaction)
           transaction.discount = discount_for(transaction)
           transaction
@@ -22,17 +22,17 @@ module ShipmentCalculator
       private
 
       def discount_for(transaction)
-        regular_price(transaction) - lowest_price
+        transaction.regular_price - lowest_price
       end
 
       def lowest_price_for(transaction)
-        return lowest_price if regular_price(transaction) > lowest_price
+        return lowest_price if transaction.regular_price > lowest_price
 
-        regular_price(transaction)
+        transaction.regular_price
       end
 
       def regular_price(transaction)
-        provider_by_short_name(transaction.short_name).price_by_size(SMALL)
+        transaction.provider.price_by_size(SMALL)
       end
 
       def lowest_price
@@ -46,14 +46,7 @@ module ShipmentCalculator
       end
 
       def small_shipment_providers
-        providers.select { |provider| provider.includes_size?(SMALL) }
-      end
-
-      def provider_by_short_name(short_name)
-        # I'm choosing last provider assuming it's the most recent
-        providers.select do |provider|
-          provider.short_name == short_name
-        end.last
+        Provider.all.select { |provider| provider.includes_size?(SMALL) }
       end
     end
   end
