@@ -20,5 +20,9 @@ module ShipmentCalculator
     def includes_size?(size)
       sizes_with_prices.keys.include?(size)
     end
+
+    def self.all
+      ShipmentCalculator.providers
+    end
   end
 end

@@ -42,4 +42,21 @@ RSpec.describe ShipmentCalculator::Provider do
       end
     end
   end
+
+  describe '.all' do
+    subject(:provider_class) { described_class }
+
+    let(:providers) do
+      [ShipmentCalculator::Provider.new('MR', {'S' => '1'}),
+       ShipmentCalculator::Provider.new('LP', {'M' => '2'})]
+    end
+
+    before do
+      allow(ShipmentCalculator).to receive(:providers).and_return(providers)
+    end
+
+    it 'returns all providers' do
+      expect(provider_class.all).to eq(providers)
+    end
+  end
 end
