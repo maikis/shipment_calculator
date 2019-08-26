@@ -1,15 +1,15 @@
 FactoryBot.define do
   factory :transaction, class: ShipmentCalculator::Transaction do
-    date { Date.parse('2019-02-01') }
-    size { 'L' }
-    short_name { 'LP' }
+    date { Date.parse('2015-02-01') }
+    size { 'XL' }
+    short_name { 'MRLP' }
 
     trait :small do
-      size { 'L' }
+      size { 'S' }
     end
 
     trait :medium do
-      size { 'L' }
+      size { 'M' }
     end
 
     trait :large do
@@ -27,6 +27,17 @@ FactoryBot.define do
     trait :with_discount do
       shipment_price { 2 }
       discount { 1 }
+    end
+
+    trait :no_discount do
+      shipment_price { 2 }
+      discount { 0 }
+    end
+
+    trait :not_valid do
+      date { '2015-02-01' }
+      size { 'CUSPS' }
+      short_name { nil }
     end
 
     initialize_with { new(date, size, short_name) }

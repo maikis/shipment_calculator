@@ -47,8 +47,8 @@ RSpec.describe ShipmentCalculator::Provider do
     subject(:provider_class) { described_class }
 
     let(:providers) do
-      [ShipmentCalculator::Provider.new('MR', {'S' => '1'}),
-       ShipmentCalculator::Provider.new('LP', {'M' => '2'})]
+      [build(:provider, :mr, sizes_with_prices: { 'S' => 1 }),
+       build(:provider, :lp, sizes_with_prices: { 'M' => 2 })]
     end
 
     before do

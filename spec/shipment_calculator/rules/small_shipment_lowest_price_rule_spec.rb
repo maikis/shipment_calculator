@@ -19,35 +19,18 @@ RSpec.describe ShipmentCalculator::Rules::SmallShipmentLowestPriceRule do
   describe '#apply' do
     subject(:rule) { described_class.new(transactions) }
 
-    let(:provider_config) { { 'MR' => { 'S' => 2 }, 'LP' => { 'S' => 1.5 } } }
-    let(:date) { Date.parse('2015-02-01') }
-    let(:size) { 'S' }
-    let(:provider) { 'MR' }
-    let(:other_provider) { 'LP' }
     let(:transactions) { [transaction1, transaction2] }
+    let(:transaction1) { build(:transaction, :small, :mr) }
+    let(:transaction2) { build(:transaction, :small, :lp) }
 
-    let(:transaction1) do
-      ShipmentCalculator::Transaction.new(date, size, provider)
-    end
-
-    let(:transaction2) do
-      ShipmentCalculator::Transaction.new(date, size, other_provider)
-    end
-
-    let(:all_providers) do
-      [ShipmentCalculator::Provider.new(
-         provider_config.keys[0],
-         provider_config.values[0]
-       ),
-       ShipmentCalculator::Provider.new(
-        provider_config.keys[1],
-        provider_config.values[1]
-       )]
+    let(:providers) do
+      [build(:provider, :mr, sizes_with_prices: { 'S' => 2 }),
+       build(:provider, :lp, sizes_with_prices: { 'S' => 1.5 })]
     end
 
 
     before do
-      allow(ShipmentCalculator).to receive(:providers).and_return(all_providers)
+      allow(ShipmentCalculator).to receive(:providers).and_return(providers)
       rule.apply
     end
 
@@ -74,11 +57,11 @@ RSpec.describe ShipmentCalculator::Rules::SmallShipmentLowestPriceRule do
     end
 
     context 'when transaction is not small size' do
-      let(:size) { 'XL' }
+      let(:transactions) { [build(:transaction, :mr)] }
 
       it 'does not set anything', :aggregate_failures do
-        expect(transaction1.shipment_price).to be_nil
-        expect(transaction1.discount).to be_nil
+        expect(transactions.first.shipment_price).to be_nil
+        expect(transactions.first.discount).to be_nil
       end
     end
   end

@@ -4,14 +4,10 @@ RSpec.describe ShipmentCalculator::Transaction do
   subject(:transaction) { described_class.new(date, size, short_name) }
 
   let(:date) { Date.parse('2015-02-01') }
-  let(:size) { 'S' }
+  let(:size) { 'L' }
   let(:short_name) { 'MR' }
-  let(:sizes_with_prices) { { 'S' => 1 } }
-  let(:provider_short_name) { 'MR' }
   let(:providers) { [provider] }
-  let(:provider) do
-    ShipmentCalculator::Provider.new(provider_short_name, sizes_with_prices)
-  end
+  let(:provider) { build(:provider, :mr) }
 
   before do
     allow(ShipmentCalculator).to receive(:providers).and_return(providers)
