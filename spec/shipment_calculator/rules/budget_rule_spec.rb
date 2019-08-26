@@ -14,29 +14,17 @@ RSpec.describe ShipmentCalculator::Rules::BudgetRule do
   describe '#apply' do
     subject(:result) { rule.apply }
 
-    let(:large_size) { 'L' }
-    let(:provider_config) { { 'LP' => { large_size => 6.9 } } }
-
-    let(:all_providers) do
-      [ShipmentCalculator::Provider.new(
-         provider_config.keys.first,
-         provider_config.values.first
-       )]
-    end
-
-    let(:transactions) do
-      [build(:transaction, :large, :lp, :with_discount)]
-    end
+    let(:transaction) { build(:transaction, :large, :lp, :with_discount) }
+    let(:transactions) { [transaction] }
 
     before do
-      allow(ShipmentCalculator).to receive(:providers).and_return(all_providers)
       result
     end
 
     context 'when budget is not used out' do
       it 'leaves applied discount', :aggregate_failures do
-        expect(result.first.shipment_price).to eq(2)
-        expect(result.first.discount).to eq(1)
+        expect(transaction.shipment_price).to eq(2)
+        expect(transaction.discount).to eq(1)
       end
 
       it 'subtracts from monthly budget' do
@@ -48,8 +36,8 @@ RSpec.describe ShipmentCalculator::Rules::BudgetRule do
       subject(:rule) { described_class.new(transactions, 0) }
 
       it 'removes applied discount', :aggregate_failures do
-        expect(result.first.shipment_price).to eq(3)
-        expect(result.first.discount).to eq(0)
+        expect(transaction.shipment_price).to eq(3)
+        expect(transaction.discount).to eq(0)
       end
 
       it 'does not subtract from monthly budget' do
@@ -61,8 +49,8 @@ RSpec.describe ShipmentCalculator::Rules::BudgetRule do
       subject(:rule) { described_class.new(transactions, 0.3) }
 
       it 'leaves discount partially applied', :aggregate_failures do
-        expect(result.first.shipment_price).to eq(2.7)
-        expect(result.first.discount).to eq(0.3)
+        expect(transaction.shipment_price).to eq(2.7)
+        expect(transaction.discount).to eq(0.3)
       end
 
       it 'subtracts from monthly budget' do
@@ -83,8 +71,8 @@ RSpec.describe ShipmentCalculator::Rules::BudgetRule do
       end
 
       it 'applies budget for each month', :aggregate_failures do
-        expect(result[0].discount).to eq(1)
-        expect(result[1].discount).to eq(1)
+        expect(transaction1.discount).to eq(1)
+        expect(transaction2.discount).to eq(1)
       end
     end
 
