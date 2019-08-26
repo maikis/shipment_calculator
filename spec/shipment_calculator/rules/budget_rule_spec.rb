@@ -25,12 +25,7 @@ RSpec.describe ShipmentCalculator::Rules::BudgetRule do
     end
 
     let(:transactions) do
-      transaction = ShipmentCalculator::Transaction.new(
-        Date.parse("2019-02-01"), large_size, 'LP'
-      )
-      transaction.shipment_price = 1
-      transaction.discount = 1
-      [transaction]
+      [build(:transaction, :large, :lp, :with_discount)]
     end
 
     before do
@@ -40,7 +35,7 @@ RSpec.describe ShipmentCalculator::Rules::BudgetRule do
 
     context 'when budget is not used out' do
       it 'leaves applied discount', :aggregate_failures do
-        expect(result.first.shipment_price).to eq(1)
+        expect(result.first.shipment_price).to eq(2)
         expect(result.first.discount).to eq(1)
       end
 
@@ -53,7 +48,7 @@ RSpec.describe ShipmentCalculator::Rules::BudgetRule do
       subject(:rule) { described_class.new(transactions, 0) }
 
       it 'removes applied discount', :aggregate_failures do
-        expect(result.first.shipment_price).to eq(2)
+        expect(result.first.shipment_price).to eq(3)
         expect(result.first.discount).to eq(0)
       end
 
@@ -66,7 +61,7 @@ RSpec.describe ShipmentCalculator::Rules::BudgetRule do
       subject(:rule) { described_class.new(transactions, 0.3) }
 
       it 'leaves discount partially applied', :aggregate_failures do
-        expect(result.first.shipment_price).to eq(1.7)
+        expect(result.first.shipment_price).to eq(2.7)
         expect(result.first.discount).to eq(0.3)
       end
 
@@ -78,22 +73,9 @@ RSpec.describe ShipmentCalculator::Rules::BudgetRule do
     context 'when couple month data is present' do
       subject(:rule) { described_class.new(transactions, 1) }
 
-      let(:transaction1) do
-        transaction = ShipmentCalculator::Transaction.new(
-          Date.parse("2019-02-01"), large_size, 'LP'
-        )
-        transaction.shipment_price = 1
-        transaction.discount = 1
-        transaction
-      end
-
+      let(:transaction1) { build(:transaction, :large, :lp, :with_discount) }
       let(:transaction2) do
-        transaction = ShipmentCalculator::Transaction.new(
-          Date.parse("2019-03-01"), large_size, 'LP'
-        )
-        transaction.shipment_price = 1
-        transaction.discount = 1
-        transaction
+        build(:transaction, :large, :lp, :with_discount, date: Date.parse('2019-03-01'))
       end
 
       let(:transactions) do
@@ -107,12 +89,7 @@ RSpec.describe ShipmentCalculator::Rules::BudgetRule do
     end
 
     context 'when transaction has no discount present' do
-      let(:transactions) do
-        transaction = ShipmentCalculator::Transaction.new(
-          Date.parse("2019-02-01"), large_size, 'LP'
-        )
-        [transaction]
-      end
+      let(:transactions) { [build(:transaction, :large, :lp, :with_discount)] }
 
       it 'does not raise error' do
         expect { result }.not_to raise_error
