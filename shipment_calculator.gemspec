@@ -29,9 +29,10 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib', 'config', 'data', 'lib/shipment_calculator']
 
   spec.add_development_dependency 'bundler', '~> 2.0'
+  spec.add_development_dependency 'factory_bot', '~> 5.0'
+  spec.add_development_dependency 'pry-byebug', '~> 3.7'
   spec.add_development_dependency 'rake', '~> 12.3'
   spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'simplecov', '~> 0.17.0'
   spec.add_development_dependency 'rubocop', '~> 0.74.0'
-  spec.add_development_dependency 'pry-byebug', '~> 3.7'
+  spec.add_development_dependency 'simplecov', '~> 0.17.0'
 end
