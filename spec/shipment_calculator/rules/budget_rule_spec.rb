@@ -12,13 +12,11 @@ RSpec.describe ShipmentCalculator::Rules::BudgetRule do
   end
 
   describe '#apply' do
-    subject(:result) { rule.apply }
-
     let(:transaction) { build(:transaction, :large, :lp, :with_discount) }
     let(:transactions) { [transaction] }
 
     before do
-      result
+      rule.apply
     end
 
     context 'when budget is not used out' do
@@ -80,7 +78,7 @@ RSpec.describe ShipmentCalculator::Rules::BudgetRule do
       let(:transactions) { [build(:transaction, :large, :lp, :with_discount)] }
 
       it 'does not raise error' do
-        expect { result }.not_to raise_error
+        expect { rule.apply }.not_to raise_error
       end
     end
   end

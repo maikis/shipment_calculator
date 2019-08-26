@@ -17,8 +17,6 @@ RSpec.describe ShipmentCalculator::Rules::ThirdLargeFreeRule do
   end
 
   describe '#apply' do
-    subject(:result) { rule.apply }
-
     let(:providers) do
       [build(:provider, :lp, sizes_with_prices: { 'L' => 6.9 }),
        build(:provider, :mr, sizes_with_prices: { 'L' => 4 })]
@@ -26,6 +24,7 @@ RSpec.describe ShipmentCalculator::Rules::ThirdLargeFreeRule do
 
     before do
       allow(ShipmentCalculator).to receive(:providers).and_return(providers)
+      rule.apply
     end
 
     context 'when shipment is Large (L)' do
@@ -38,21 +37,21 @@ RSpec.describe ShipmentCalculator::Rules::ThirdLargeFreeRule do
           end
 
           it 'applies discount to the third transaction', :aggregate_failures do
-            expect(result[2].shipment_price).to eq(0)
-            expect(result[2].discount).to eq(6.9)
+            expect(transactions[2].shipment_price).to eq(0)
+            expect(transactions[2].discount).to eq(6.9)
           end
 
           # Separated this one from the next test to have more clarity.
           it 'applies discount only once', :aggregate_failures do
             # 6'th transaction has no repeating discount.
-            expect(result[5].shipment_price).to eq(6.9)
-            expect(result[5].discount).to eq(0)
+            expect(transactions[5].shipment_price).to eq(6.9)
+            expect(transactions[5].discount).to eq(0)
           end
 
           it 'sets regular price for other LP transactions', :aggregate_failures do
             [0, 1, 3, 4].each do |index|
-              expect(result[index].shipment_price).to eq(6.9)
-              expect(result[index].discount).to eq(0)
+              expect(transactions[index].shipment_price).to eq(6.9)
+              expect(transactions[index].discount).to eq(0)
             end
           end
         end
@@ -67,15 +66,15 @@ RSpec.describe ShipmentCalculator::Rules::ThirdLargeFreeRule do
 
           it 'applies discount to the third transaction of each month', :aggregate_failures do
             [2, 5].each do |index|
-              expect(result[index].shipment_price).to eq(0)
-              expect(result[index].discount).to eq(6.9)
+              expect(transactions[index].shipment_price).to eq(0)
+              expect(transactions[index].discount).to eq(6.9)
             end
           end
 
           it 'sets regular price for other LP transactions', :aggregate_failures do
             [0, 1, 3, 4].each do |index|
-              expect(result[index].shipment_price).to eq(6.9)
-              expect(result[index].discount).to eq(0)
+              expect(transactions[index].shipment_price).to eq(6.9)
+              expect(transactions[index].discount).to eq(0)
             end
           end
         end
@@ -90,17 +89,15 @@ RSpec.describe ShipmentCalculator::Rules::ThirdLargeFreeRule do
 
           it 'applies discount for different year same month transactions', :aggregate_failures do
             [2, 5].each do |index|
-              expect(result[index].shipment_price).to eq(0)
-              expect(result[index].discount).to eq(6.9)
+              expect(transactions[index].shipment_price).to eq(0)
+              expect(transactions[index].discount).to eq(6.9)
             end
           end
         end
       end
 
       context 'when provider is not LP' do
-        let(:transactions) do
-          [build(:transaction, :large, :mr)]
-        end
+        let(:transactions) { [build(:transaction, :large, :mr)] }
 
         it 'ignores transactions' do
           expect(rule.transactions).to be_empty
@@ -109,9 +106,7 @@ RSpec.describe ShipmentCalculator::Rules::ThirdLargeFreeRule do
     end
 
     context 'when shipments are not Large (L)' do
-      let(:transactions) do
-        [build(:transaction, :small, :mr)]
-      end
+      let(:transactions) { [build(:transaction, :small, :mr)] }
 
       it 'ignores transactions' do
         expect(rule.transactions).to be_empty
@@ -119,6 +114,7 @@ RSpec.describe ShipmentCalculator::Rules::ThirdLargeFreeRule do
     end
 
     context 'when shipments are mixed sizes' do
+      let(:transactions) { small_transactions + large_transactions }
       let(:small_transactions) do
         (1..2).map do |day|
           build(:transaction, :small, :lp, date: Date.parse("2015-02-0#{day}"))
@@ -129,12 +125,6 @@ RSpec.describe ShipmentCalculator::Rules::ThirdLargeFreeRule do
         (3..5).map do |day|
           build(:transaction, :large, :lp, date: Date.parse("2015-02-0#{day}"))
         end
-      end
-
-      let(:transactions) { small_transactions + large_transactions }
-
-      before do
-        result
       end
 
       it 'does not add discount for absolute third transaction', :aggregate_failures do

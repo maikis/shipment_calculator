@@ -14,12 +14,12 @@ module ShipmentCalculator
       end
 
       def apply
-        months.map do |year, month|
+        months.each do |year, month|
           @current_budget = monthly_budget
-          transactions_at(year, month).map do |transaction|
+          transactions_at(year, month).each do |transaction|
             adjust_discount(transaction)
           end
-        end.flatten
+        end
       end
 
       private

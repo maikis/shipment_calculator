@@ -15,15 +15,15 @@ module ShipmentCalculator
       end
 
       def apply
-        months.map do |year, month|
-          transactions_at(year, month).map.with_index do |transaction, pos|
+        months.each do |year, month|
+          transactions_at(year, month).each.with_index do |transaction, pos|
             if transaction.size == SIZE
               transaction.shipment_price = price(transaction.provider, pos)
               transaction.discount = discount(transaction.provider, pos)
             end
             transaction
           end
-        end.flatten
+        end
       end
 
       private

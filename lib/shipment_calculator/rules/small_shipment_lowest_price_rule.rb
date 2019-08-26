@@ -14,7 +14,7 @@ module ShipmentCalculator
       end
 
       def apply
-        transactions.map do |transaction|
+        transactions.each do |transaction|
           transaction.shipment_price = lowest_price_for(transaction)
           transaction.discount = discount_for(transaction)
           transaction
