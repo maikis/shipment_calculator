@@ -45,7 +45,7 @@ RSpec.describe ShipmentCalculator::Rules::BudgetRule do
       end
 
       it 'subtracts from monthly budget' do
-        expect(rule.current_month_budget).to eq(9) # 10 - 1 (transaction discount).
+        expect(rule.current_budget).to eq(9) # 10 - 1 (transaction discount).
       end
     end
 
@@ -58,7 +58,7 @@ RSpec.describe ShipmentCalculator::Rules::BudgetRule do
       end
 
       it 'does not subtract from monthly budget' do
-        expect(rule.current_month_budget).to eq(0)
+        expect(rule.current_budget).to eq(0)
       end
     end
 
@@ -71,7 +71,7 @@ RSpec.describe ShipmentCalculator::Rules::BudgetRule do
       end
 
       it 'subtracts from monthly budget' do
-        expect(rule.current_month_budget).to eq(0)
+        expect(rule.current_budget).to eq(0)
       end
     end
 

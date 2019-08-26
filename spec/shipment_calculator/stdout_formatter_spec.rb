@@ -18,11 +18,6 @@ RSpec.describe ShipmentCalculator::StdoutFormatter do
       transaction
     end
 
-    let(:transaction_details) do
-      "#{transaction.date} #{transaction.size} #{transaction.short_name}"\
-      " #{transaction.shipment_price} #{transaction.discount}\n"
-    end
-
     context 'when transaction is valid' do
       it 'outputs transaction with details to STDOUT using two decimals format' do
         expect { result_object.output_result }.to output(/2019-02-01 L LP 1.00 2.00/).to_stdout
