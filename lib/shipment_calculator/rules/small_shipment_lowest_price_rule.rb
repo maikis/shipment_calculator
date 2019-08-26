@@ -32,16 +32,16 @@ module ShipmentCalculator
       end
 
       def regular_price(transaction)
-        transaction.provider.price_by_size(SMALL)
+        transaction.provider.price_for(size: SMALL)
       end
 
       def lowest_price
-        @lowest_price ||= lowest_price_provider.price_by_size(SMALL)
+        @lowest_price ||= lowest_price_provider.price_for(size: SMALL)
       end
 
       def lowest_price_provider
         small_shipment_providers.min do |p1, p2|
-          p1.price_by_size(SMALL) <=> p2.price_by_size(SMALL)
+          p1.price_for(size: SMALL) <=> p2.price_for(size: SMALL)
         end
       end
 

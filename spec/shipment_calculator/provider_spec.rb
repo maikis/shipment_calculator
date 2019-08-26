@@ -17,11 +17,11 @@ RSpec.describe ShipmentCalculator::Provider do
     end
   end
 
-  describe '#price_by_size' do
+  describe '#price_for' do
     let(:size) { 'S' }
 
     it 'returns price for provided size' do
-      expect(provider.price_by_size(size)).to eq(2)
+      expect(provider.price_for(size: size)).to eq(2)
     end
   end
 

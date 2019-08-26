@@ -33,7 +33,7 @@ RSpec.describe ShipmentCalculator::Transaction do
 
   describe '#regular_price' do
     it 'has regular_price' do
-      expect(transaction.regular_price).to eq(provider.price_by_size(size))
+      expect(transaction.regular_price).to eq(provider.price_for(size: size))
     end
   end
 

@@ -24,7 +24,7 @@ module ShipmentCalculator
     end
 
     def regular_price
-      @regular_price ||= provider.price_by_size(size)
+      @regular_price ||= provider.price_for(size: size)
     end
 
     def self.from_data(date:, size:, short_name:)

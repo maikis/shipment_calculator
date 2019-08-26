@@ -27,11 +27,11 @@ module ShipmentCalculator
       private
 
       def discount(provider, pos)
-        third?(pos) ? provider.price_by_size(SIZE) : 0
+        third?(pos) ? provider.price_for(size: SIZE) : 0
       end
 
       def price(provider, pos)
-        third?(pos) ? 0 : provider.price_by_size(SIZE)
+        third?(pos) ? 0 : provider.price_for(size: SIZE)
       end
 
       def third?(pos)
